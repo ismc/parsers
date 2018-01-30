@@ -1,0 +1,13 @@
+---
+- name: parse show version
+
+  facts:
+    system_mac: "{{ contents.systemMacAddress }}"
+    version:
+      string: "{{ contents.version }}"
+      major: "{{ contents.version.split('.')[0] }}"
+      minor: "{{ contents.version.split('.')[1] }}"
+      maint: "{{ contents.version.split('.')[2] }}"
+    memory:
+      total: "{{ contents.memTotal }}"
+      free_mem: "{{ contents.memFree }}"

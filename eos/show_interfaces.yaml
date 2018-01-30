@@ -1,0 +1,34 @@
+---
+- name: parse show interfaces
+
+  context:
+    start: "[^\\s]"
+    end: "PAUSE output"
+
+  facts:
+    interfaces:
+      - name: "{{ name.0 }}"
+        mac_address: "{{ mac_addr.0 }}"
+        ipv4:
+          address: "{{ ipv4addr.0.split('/')[0] }}"
+          masklen: "{{ ipv4addr.0.split('/')[1] }}"
+        line_protocol: "{{ line_proto.0 }}"
+        mtu: "{{ mtu.0 }}"
+
+
+  matches:
+    - pattern: "^(\\S+)"
+      match_var: name
+
+    - pattern: "line protocol is {{ ALPHAS }}"
+      match_var: line_proto
+
+    - pattern: "address is ([\\d|\\w]{4}.[\\d|\\w]{4}.[\\d|\\w]{4})"
+      match_var: mac_addr
+
+    - pattern: "MTU {{ NUMS }}"
+      match_var: mtu
+
+    - pattern: "Internet address is (.+)"
+      match_var: ipv4addr
+

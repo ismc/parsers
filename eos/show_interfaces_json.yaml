@@ -1,23 +1,30 @@
 ---
-- name: parse `show interfaces | json` and return facts
+- name: show interfaces | json
 
-  block:
-    - name: basic interface facts
-      facts:
-        interfaces:
-          - name: "{{ item.key }}"
-            status: "{{ item.value.interfaceStatus }}"
+  facts:
+    - key: interfaces
+      loop: "{{ contents.interfaces }}"
+      items:
+        - key: name
+          value: "{{ item.key }}"
 
-     - name: address-family
+        - key: status
+          value: "{{ item.value.interfaceStatus }}"
 
-       loop: "{{ item.value.interfaceAddress }}"
+        - key: mode
+          value: "{{ item.value.forwardingModel }}"
 
-       facts:
-         interfaces:
-           address_family:
-             ipv4:
-               - address: "{{ item.primaryIp.address }}"
-                 masklen: "{{ item.primaryIp.maskLen }}"
-  loop: "{{ interfaces }}"
+        - key: description
+          value: "{{ item.value.description }}"
 
+        - key: address_family
+          items:
+            - key: ipv4
+              loop: "{{ item.value.interfaceAddress }}"
+              loop_control: { loop_var: address }
+              items:
+                - key: address
+                  value: "{{ address.primaryIp.address }}"
+                - key: masklen
+                  value: "{{ address.primaryIp.maskLen }}"
 

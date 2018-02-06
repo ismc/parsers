@@ -1,17 +1,5 @@
 ---
-- name: parse show version
-
-  facts:
-    system_mac: "{{ macaddr.0 }}"
-    uptime: "{{ uptime.0 }}"
-    version:
-      string: "{{ version.0 }}"
-      major: "{{ version.0.split('.')[0] }}"
-      minor: "{{ version.0.split('.')[1] }}"
-      maint: "{{ version.0.split('.')[2] }}"
-    memory:
-      total: "{{ total_mem.0 }}"
-      free_mem: "{{ free_mem.0 }}"
+- name: show version
 
   matches:
     - pattern: "image version:\\s+(.+)"
@@ -29,4 +17,28 @@
     - pattern: "Uptime:\\s+(.+)"
       match_var: uptime
 
+  facts:
+    - key: system_mac
+      value: "{{ macaddr.0 }}"
+
+    - key: uptime
+      value: "{{ uptime.0 }}"
+
+    - key: version
+      items:
+        - key: string
+          value: "{{ version.0 }}"
+        - key: major
+          value: "{{ version.0.split('.')[0] }}"
+        - key: minor
+          value: "{{ version0..split('.')[1] }}"
+        - key: maint
+          value: "{{ version.0.split('.')[2] }}"
+
+    - key: memory
+      items:
+        - key: total
+          value: "{{ total_mem.0 }}"
+        - key: free
+          value: "{{ free_mem.0 }}"
 

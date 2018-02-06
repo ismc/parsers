@@ -1,17 +1,20 @@
 ---
-- name: parse show lldp neighbors
+- name: show lldp neighbors
 
   matches:
     - pattern: "^([E|M]\\w+\\d+)\\s+(\\S+)\\s+(\\S+)"
       match_var: lldp
       match_all: yes
 
-  loop: "{{ lldp }}"
-
   facts:
-    lldp:
-      neighbors:
-        - port: "{{ item.0 }}"
-          neighbor: "{{ item.1.split('.')[0] }}"
-          neighbor_port: "{{ item.2 }}"
-
+    - key: lldp
+      items:
+        - key: neighbors
+          items:
+            - key: port
+              value: "{{ item.0 }}"
+            - key: neighbor
+              value: "{{ item.1.split(',')[0] }}"
+            - key: neighbor_port
+              value: "{{ item.2 }}"
+          loop: "{{ lldp }}"

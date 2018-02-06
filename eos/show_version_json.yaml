@@ -1,13 +1,24 @@
 ---
-- name: parse show version
+- name: show version | json
 
   facts:
-    system_mac: "{{ contents.systemMacAddress }}"
-    version:
-      string: "{{ contents.version }}"
-      major: "{{ contents.version.split('.')[0] }}"
-      minor: "{{ contents.version.split('.')[1] }}"
-      maint: "{{ contents.version.split('.')[2] }}"
-    memory:
-      total: "{{ contents.memTotal }}"
-      free_mem: "{{ contents.memFree }}"
+    - key: system_mac
+      value: "{{ contents.systemMacAddress }}"
+
+    - key: version
+      items:
+        - key: string
+          value: "{{ contents.version }}"
+        - key: major
+          value: "{{ contents.version.split('.')[0] }}"
+        - key: minor
+          value: "{{ contents.version.split('.')[1] }}"
+        - key: maint
+          value: "{{ contents.version.split('.')[2] }}"
+
+    - key: memory
+      items:
+        - key: total
+          value: "{{ contents.memTotal }}"
+        - key: free
+          value: "{{ contents.memFree }}"

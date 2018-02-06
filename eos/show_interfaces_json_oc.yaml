@@ -1,0 +1,78 @@
+---
+- name: show interfaces | json
+
+  facts:
+    - key: interfaces
+      loop: "{{ contents.interfaces }}"
+      items:
+        - key: "{{ item.key }}"
+          items:
+            - key: name
+              value: "{{ item.value.name }}"
+
+            - key: config
+              items:
+                - key: name
+                  value: "{{ item.value.name }}"
+                - key: type
+                  value: "{{ item.value.hardware }}"
+                - key: mtu
+                  value: "{{ item.value.mtu }}"
+                - key: description
+                  value: "{{ item.value.description }}"
+                - key: enabled
+                  value: "{{ item.value.interfaceStatus != 'disabled' }}"
+
+            - key: state
+              items:
+                - key: name
+                  value: "{{ item.key }}"
+                - key: type
+                  value: "{{ item.value.hardware }}"
+                - key: mtu
+                  value: "{{ item.vlaue.mtu }}"
+                - key: description
+                  value: "{{ item.value.description }}"
+                - key: enabled
+                  value: "{{ item.value.interfaceStatus != 'disabled' }}"
+                - key: ifindex
+                  value: "not supported"
+                - key: admin-status
+                  value: "{{ item.value.interfaceStatus }}"
+                - key: oper-status
+                  value: "{{ item.value.lineProtocolStatus }}"
+                - key: last-change
+                  value: "{{ item.value.lastStatusChangeTimestamp }}"
+                - key: counters
+                  items:
+                    - key: in-octets
+                      value: "{{ item.value.interfaceCounters.inOctets }}"
+                    - key: in-unicast-pkts
+                      value: "{{ item.value.interfaceCounters.inUcastPkts }}"
+                    - key: in-broadcast-pkts
+                      value: "{{ item.value.interfaceCounters.inBroadcastPkts }}"
+                    - key: in-multicast-pkts
+                      value: "{{ item.value.interfaceCounters.inMulticastPkts }}"
+                    - key: in-discards
+                      value: "{{ item.value.interfaceCounters.inDiscards }}"
+                    - key: in-errors
+                      value: "{{ item.value.interfaceCounters.totalInErrors }}"
+                    - key: in-unkown-protos
+                      value: "not supported"
+                    - key: in-fcs-errors
+                      value: "{{ item.value.interfaceCounters.inputErrorsDetail.fcsErrors }}"
+                    - key: out-octets
+                      value: "{{ item.value.interfaceCounters.outOctets }}"
+                    - key: out-unicast-pkts
+                      value: "{{ item.value.interfaceCounters.outUcastPkts }}"
+                    - key: out-broadcast-pkts
+                      value: "{{ item.value.interfaceCounters.outBroadcastPkts }}"
+                    - key: out-multicast-pkts
+                      value: "{{ item.value.interfaceCounters.outMulticastPkts }}"
+                    - key: out-discards
+                      value: "{{ item.value.interfaceCounters.outDiscards }}"
+                    - key: out-errors
+                      value: "{{ item.value.interfaceCounters.totalOutErrors }}"
+
+
+

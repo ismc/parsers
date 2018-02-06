@@ -1,20 +1,8 @@
 ---
-- name: parse show interfaces
+- name: show interfaces
 
   context:
-    start: "[^\\s]"
-    end: "PAUSE output"
-
-  facts:
-    interfaces:
-      - name: "{{ name.0 }}"
-        mac_address: "{{ mac_addr.0 }}"
-        ipv4:
-          address: "{{ ipv4addr.0.split('/')[0] }}"
-          masklen: "{{ ipv4addr.0.split('/')[1] }}"
-        line_protocol: "{{ line_proto.0 }}"
-        mtu: "{{ mtu.0 }}"
-
+    start: "^.+ is up,"
 
   matches:
     - pattern: "^(\\S+)"
@@ -31,4 +19,27 @@
 
     - pattern: "Internet address is (.+)"
       match_var: ipv4addr
+
+  facts:
+    - key: interfaces
+      loop: "{{ context }}"
+      items:
+        - key: name
+          value: "{{ item.name.0 }}"
+
+        - key: mac_address
+          value: "{{ item.mac_addr.0 }}"
+
+        - key: ipv4
+          items:
+            - key: address
+              value: "{{ item.ipv4addr.0.split('/')[0] }}"
+            - key: masklen
+              value: "{{ item.ipv4addr.0.split('/')[1] }}"
+
+        - key: line_protocol
+          value: "{{ item.line_proto.0 }}"
+
+        - key: mtu
+          value: "{{ item.mtu.0 }}"
 

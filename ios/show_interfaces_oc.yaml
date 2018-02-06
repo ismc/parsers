@@ -1,0 +1,106 @@
+---
+- name: parse show interfaces into openconfig model
+
+  context:
+    start: "^\\S+ is up,"
+
+  matches:
+    - pattern: "^(\\S+)"
+      match_var: name
+
+    - pattern: "Hardware is (\\S+)"
+      match_var: type
+
+    - pattern: "MTU (\\d+)"
+      match_var: mtu
+
+    - pattern: "Description: (.+)"
+      match_var: description
+
+    - pattern: "(administratively down)"
+      match_var: enabled
+
+    - pattern: "line protocol is (\\S+)"
+      match_var: operstatus
+
+    - pattern: "(\\d+) packets input, (\\d+)"
+      match_var: in_pkts_octets
+
+    - pattern: "Received (\\d+) broadcasts \\(\\d+"
+      match_var: in_bcast_mcast
+
+    - pattern: "(\\d+) packets output, (\\d+) bytes"
+      match_var: out_pkts_octets
+
+    - pattern: "(\\d+) output errors"
+      match_var: out_errors
+
+  facts:
+    - key: interfaces
+      loop: "{{ context }}"
+      items:
+        - key: name
+          value: "{{ item.name.0 }}"
+        - key: config
+          items:
+            - key: name
+              value: "{{ item.name.0 }}"
+            - key: type
+              value: "{{ item.type.0 }}"
+            - key: mtu
+              value: "{{ item.mtu.0 }}"
+            - key: description
+              value: "{{ item.description.0 }}"
+            - key: enabled
+              value: "{{ item.enabled.0 is undefined }}"
+        - key: state
+          items:
+            - key: name
+              value: "{{ item.name.0 }}"
+            - key: type
+              value: "{{ item.type.0 }}"
+            - key: mtu
+              value: "{{ item.mtu.0 }}"
+            - key: description
+              value: "{{ item.description.0 }}"
+            - key: enabled
+              value: "{{ item.enabled.0 is undefined }}"
+            - key: ifindex
+              value: "not supported"
+            - key: admin-status
+              value: "{{ item.enabled.0 is undefined | ternary ('enabled', 'disabled') }}"
+            - key: oper-status
+              value: "{{ item.operstatus.0 }}"
+            - key: last-changed
+              value: "not supported"
+            - key: counters
+              items:
+                - key: in-octets
+                  value: "{{ item.in_pkts_octets.0 }}"
+                - key: in-unicast-pkts
+                  value: "{{ item.in_pkts_octets.1 }}"
+                - key: in-broadcast-pkts
+                  value: "{{ item.in_bcast_mcast.0 }}"
+                - key: in-multicast-pkts
+                  value: "{{ item.in_bcast_mcast.1 }}"
+                - key: in-discards
+                  value: "not supported"
+                - key: in-errors
+                  value: "not supported"
+                - key: in-unknown-protos
+                  value: "not supported"
+                - key: in-fcs-errors
+                  value: "not supported"
+                - key: out-octets
+                  value: "{{ item.out_pkts_octets.0 }}"
+                - key: out-unicast-pkts
+                  value: "{{ item.out_pkts_octets.1 }}"
+                - key: out-broadcast-pkts
+                  value: "not supported"
+                - key: out-multicast-pkts
+                  value: "not supported"
+                - key: out-discards
+                  value: "not supported"
+                - key: out-errors
+                  value: "{{ item.out_errors.0 }}"
+

@@ -1,0 +1,35 @@
+---
+- name: show ip prefix-list
+
+  context:
+    start: "^ip"
+
+  matches:
+    - pattern: "ip prefix-list (.+): (\\d+) entries"
+      match_var: name
+
+    - pattern: "seq (\\d+) (permit|deny) (\\S+)/(\\d+)(?: (le|ge) (\\d+))*"
+      match_var: entry
+      match_all: yes
+
+  facts:
+    - key: ipv4_prefix_list
+      loop: "{{ context }}"
+      items:
+        - key: name
+          value: "{{ item.name.0 }}"
+        - key: entries
+          items:
+            - key: sequence
+              value: "{{ item.0 }}"
+            - key: action
+              value: "{{ item.1 }}"
+            - key: prefix
+              value: "{{ item.2 }}"
+            - key: masklen
+              value: "{{ item.3 }}"
+            - key: lege
+              value: "{{ item.4 }}"
+            - key: bound
+              value: "{{ item.5 }}"
+          loop: "{{ item.entry }}"

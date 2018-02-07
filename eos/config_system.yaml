@@ -1,0 +1,29 @@
+---
+- name: show running-config
+
+  matches:
+    - pattern: "hostname (.+)"
+      match_var: hostname
+
+    - pattern: "ip domain-name (.+)"
+      match_var: domain_name
+
+    - pattern: "ip domain lookup vrf (\\S+) source-interface (\\S+)"
+      match_var: domain_lookup
+
+  facts:
+    - key: system
+      items:
+        - key: config
+          items:
+            - key: hostname
+              value: "{{ hostname.0 }}"
+            - key: domain_name
+              value: "{{ domain_name.0 }}"
+            - key: domain_lookup
+              items:
+                - key: interface
+                  value: "{{ domain_lookup.1 }}"
+                - key: vrf
+                  value: "{{ domain_lookup.0 }}"
+

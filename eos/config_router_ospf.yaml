@@ -1,0 +1,39 @@
+---
+- name: show running-config
+
+  context:
+    start: "^router ospf \\d+"
+    end: "^!"
+
+  matches:
+    - pattern: "router ospf (\\d+)"
+      match_var: process_id
+
+    - pattern: "router-id (.+)"
+      match_var: router_id
+
+    - pattern: "network (\\S+) area (\\S+)"
+      match_var: networks
+      match_all: yes
+
+  facts:
+    - key: ospf
+      items:
+        - key: config
+          items:
+            - key: process_id
+              value: "{{ context.0.process_id.0 }}"
+
+            - key: router_id
+              value: "{{ context.0.router_id.0 }}"
+
+            - key: networks
+              loop: "{{ context.0.networks }}"
+              loop_control: { loop_var: network }
+              items:
+                - key: network
+                  value: "{{ network.0 }}"
+                - key: area
+                  value: "{{ network.1 }}"
+
+

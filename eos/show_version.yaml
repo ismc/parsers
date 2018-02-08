@@ -31,7 +31,7 @@
         - key: major
           value: "{{ version.0.split('.')[0] }}"
         - key: minor
-          value: "{{ version0..split('.')[1] }}"
+          value: "{{ version.0.split('.')[1] }}"
         - key: maint
           value: "{{ version.0.split('.')[2] }}"
 

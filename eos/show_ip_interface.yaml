@@ -1,0 +1,45 @@
+---
+- name: show ip interface
+
+  context:
+    start: ".+ is up,"
+
+  matches:
+    - pattern: "^(\\S+) is up, line protocol is (\\w+)"
+      match_var: name
+
+    - pattern: "(No Internet protocol address assigned)"
+      match_var: enabled
+
+    - pattern: "Internet address is (.+)/(\\d+)"
+      match_var: ipv4addr
+
+    - pattern: "IP MTU (\\d+)"
+      match_var: mtu
+
+    - pattern: "VPN Routing/Forwarding \"(\\w+)\""
+      match_var: vrf
+
+
+  facts:
+    - key: ip_interfaces
+      loop: "{{ context }}"
+      type: dict
+      items:
+        - key: "{{ item.name.0 }}"
+          type: dict
+          items:
+            - key: enabled
+              value: "{{ item.enabled.0 is undefined }}"
+
+            - key: address
+              value: "{{ item.ipv4addr.0 }}"
+
+            - key: masklen
+              value: "{{ item.ipv4addr.1 }}"
+
+            - key: mtu
+              value: "{{ item.mtu.0 }}"
+
+            - key: vrf
+              value: "{{ item.vrf.0 }}"

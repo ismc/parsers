@@ -1,0 +1,23 @@
+---
+- name: show vlan
+
+  matches:
+    - pattern: "(\\d+)\\s+(\\w+)\\s+(\\w+)\\s+([Et\\d+|,|\\s]*)$"
+      match_var: vlans
+      match_all: yes
+
+  facts:
+    - key: vlans
+      loop: "{{ vlans }}"
+      items:
+        - key: vlan_id
+          value: "{{ item.0 }}"
+
+        - key: name
+          value: "{{ item.1 }}"
+
+        - key: status
+          value: "{{ item.2 }}"
+
+        - key: ports
+          value: "{{ item.3.split(', ') | list }}"

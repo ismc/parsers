@@ -5,7 +5,7 @@
     start: "^.+ is up,"
 
   matches:
-    - pattern: "^(\\S+)"
+    - pattern: "^(\\S+) is (\\w+)"
       match_var: name
 
     - pattern: "line protocol is {{ ALPHAS }}"
@@ -23,23 +23,29 @@
   facts:
     - key: interfaces
       loop: "{{ context }}"
+      type: dict
       items:
-        - key: name
-          value: "{{ item.name.0 }}"
-
-        - key: mac_address
-          value: "{{ item.mac_addr.0 }}"
-
-        - key: ipv4
+        - key: "{{ item.name.0 }}"
+          type: dict
           items:
-            - key: address
-              value: "{{ item.ipv4addr.0.split('/')[0] }}"
-            - key: masklen
-              value: "{{ item.ipv4addr.0.split('/')[1] }}"
+            - key: oper_status
+              value: "{{ item.name.1 }}"
 
-        - key: line_protocol
-          value: "{{ item.line_proto.0 }}"
+            - key: mac_address
+              value: "{{ item.mac_addr.0 }}"
 
-        - key: mtu
-          value: "{{ item.mtu.0 }}"
+            - key: ipv4
+              type: dict
+              items:
+                - key: address
+                  value: "{{ item.ipv4addr.0.split('/')[0] }}"
+                - key: masklen
+                  value: "{{ item.ipv4addr.0.split('/')[1] }}"
+
+            - key: line_protocol
+              value: "{{ item.line_proto.0 }}"
+
+            - key: mtu
+              value: "{{ item.mtu.0 }}"
+              type: int
 

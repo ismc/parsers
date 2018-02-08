@@ -1,0 +1,53 @@
+---
+- name: show interfaces switchport
+
+  context:
+    start: "^Name: "
+
+  matches:
+    - pattern: "Name: (.+)"
+      match_var: name
+
+    - pattern: "Switchport: (Enabled)"
+      match_var: enabled
+
+    - pattern: "Administrative Mode: (.+)"
+      match_var: admin_mode
+
+    - pattern: "Operational Mode: (.+)"
+      match_var: oper_mode
+
+    - pattern: "MAC Address Learning: (enabled)"
+      match_var: address_learning
+
+    - pattern: "Access Mode VLAN: (\\d+)"
+      match_var: access_vlan
+
+    - pattern: "Trunking Native Mode VLAN: (\\d+)"
+      match_var: trunk_native_vlan
+
+  facts:
+    - key: switchports
+      loop: "{{ context }}"
+      items:
+        - key: name
+          value: "{{ item.name.0 }}"
+
+        - key: enabled
+          value: "{{ item.enabled is defined }}"
+
+        - key: admin_mode
+          value: "{{ item.admin_mode.0 }}"
+
+        - key: oper_mode
+          value: "{{ item.oper_mode.0 }}"
+
+        - key: mac_address_learning
+          value: "{{ item.address_learning is defined }}"
+
+        - key: access_vlan
+          value: "{{ item.access_vlan.0 }}"
+
+        - key: trunk_native_vlan
+          value: "{{ item.trunk_native_vlan.0 }}"
+

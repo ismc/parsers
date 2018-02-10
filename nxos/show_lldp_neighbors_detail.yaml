@@ -1,0 +1,49 @@
+---
+- name: show lldp neighbors detail
+
+  context:
+    start: "^Chassis"
+    end: "^$"
+
+  matches:
+    - pattern: "^System Name: (.*)$"
+      match_var: system_name
+    - pattern: "^Local Port id: (.*)$"
+      match_var: local_port_id
+    - pattern: "^Port id: (.*)$"
+      match_var: port_id
+    - pattern: "^Chassis id: (.*)$"
+      match_var: chassis_id
+    - pattern: "^Port Description: (.*)$"
+      match_var: port_description
+    - pattern: "System Description: (.*)$"
+      match_var: system_description
+    - pattern: "^Management Address: (.*)$"
+      match_var: management_address
+    - pattern: "^Management Address IPV6: (.*)$"
+      match_var: management_address_ipv6
+
+
+  facts:
+    - key: lldp
+      items:
+        - key: neighbors
+          items:
+            - key: "{{ item.system_name.0 }}"
+              type: dict
+              items:
+                - key: local_port
+                  value: "{{ item.local_port_id.0 }}"
+                - key: neighbor_port
+                  value: "{{ item.port_id.0 }}"
+                - key: chassis_id
+                  value: "{{ item.chassis_id.0 }}"
+                - key: port_description
+                  value: "{{ item.port_description.0 }}"
+                - key: system_description
+                  value: "{{ item.system_description.0 }}"
+                - key: management_address
+                  value: "{{ item.management_address.0 }}"
+                - key: management_address_ipv6
+                  value: "{{ item.management_address_ipv6.0 }}"
+          loop: "{{ context }}"
